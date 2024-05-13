@@ -1,0 +1,40 @@
+{
+    "fieldsDefinition": {
+        "id": {
+            "type": "INTEGER",
+            "autoIncrement": true,
+            "primaryKey": true
+        },
+        "username": {
+            "type": "STRING",
+            "unique": true
+        },
+        "password": {
+            "type": "STRING"
+        },
+        "role": {
+            "type": "STRING"
+        },
+        "idNumber": {
+            "type": "INTEGER"
+        },
+        "idType": {
+            "type": "STRING"
+        },
+        "fullName": {
+            "type": "STRING"
+        },
+        "address": {
+            "type": "STRING"
+        },
+        "sessionToken": {
+            "type": "STRING"
+        }
+    },
+    "associations": [
+        {
+            "relationType": "hasMany",
+            "relationModel": "SocialMediaInfo"
+        }
+    ]
+}

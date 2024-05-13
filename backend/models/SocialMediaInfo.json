@@ -1,0 +1,18 @@
+{
+    "fieldsDefinition": {
+        "id": {
+            "type": "INTEGER",
+            "autoIncrement": true,
+            "primaryKey": true
+        },
+        "SocialMediaInfoaName": {
+            "type": "INTEGER"
+        },
+        "SocialMediaAccount": {
+            "type": "STRING"
+        }
+    },
+    "associations": [], 
+    "hooks": [],
+    "prototypes": []
+}
