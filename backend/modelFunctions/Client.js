@@ -25,7 +25,8 @@ async function defineModel(sequelize, modelName, definitions, options) {
     }
 
     localDefinitions.sessionToken = {
-        type: DataTypes.STRING(500)
+        type: DataTypes.STRING(500),
+        get() { return null},
     }
 
     let userModel = await sequelize.define(modelName, localDefinitions, options)

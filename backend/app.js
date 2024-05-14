@@ -18,7 +18,7 @@ const { models, sequelize } = modelEntity
 
 const app = express()
 
-app.use(cors({ origin: 'http://localhost:3000', }))
+app.use(cors({ origin: 'http://localhost:5173', }))
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb' }));
@@ -56,8 +56,9 @@ app.post('/login', async function (req, res) {
   } else {
     let token = JWTHandler.generateJWT({username: authenticatedUser.username})
     await models.Client.update({ sessionToken: token }, { where: { username: username} })
-    authenticatedUser.set("token", token)
-    res.status(200).send(authenticatedUser)
+    let output = JSON.parse(JSON.stringify(authenticatedUser))
+    output.sessionToken = token
+    res.status(200).send(output)
   }
 
 });
@@ -75,6 +76,22 @@ app.get("/identity", async (req, res) => {
     res.status(200).send({
       fullName: authenticatedUser.get("username"),
     })
+  }
+})
+
+app.get("/logout", async (req, res) => {
+  let decodedData = JWTHandler.decodeJWT(req.header("Authorization")?.replace("Bearer ", ""))
+  let authenticatedUser = await models.Client.findOne({
+    where: { username: decodedData.username },
+    attributes: { exclude: ["password", "sessionToken", "createdAt", "updatedAt", "id"] }
+  })
+
+  if (authenticatedUser === null) {
+    res.status(500).send(ErrorHandlers.helperRequestErrorGenerator(500, "User does not exist"))
+  } else {
+    
+    await models.Client.update({ sessionToken: null }, { where: { username: decodedData.username} })
+    res.status(200).send(ErrorHandlers.helperRequestSuccessMessageGenerator(200))
   }
 })
 

@@ -14,6 +14,21 @@ function helperRequestErrorGenerator(errorNumber, customMessage = undefined) {
     }
 }
 
+function helperRequestSuccessMessageGenerator(successNumber, customMessage = undefined) {
+    let successMessage = typeof customMessage == "string"? customMessage: "Request Successfully Processed"
+    switch(successNumber){
+        case 200:
+            return {successType: "OK", successMessage}
+        case 201:
+            return {successType: "Created", successMessage}
+        case 202:
+            return {successType: "Accepted", successMessage}
+        default:
+            return {successType: "Generic Error", successMessage}
+    }
+}
+
 export default { 
-    helperRequestErrorGenerator
+    helperRequestErrorGenerator, 
+    helperRequestSuccessMessageGenerator
  }
