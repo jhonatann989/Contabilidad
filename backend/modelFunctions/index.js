@@ -18,4 +18,18 @@ for(let file of fs.readdirSync(`${__dirname}`)) {
     }
 }
 
-export default modules
+async function defineModel(sequelize, modelName, definitions, options) {
+    return sequelize.define(modelName, definitions, options)
+}
+
+async function getModelDefiner(modelName) {
+    if(modules.hasOwnProperty(modelName)) {
+        return modules[modelName]
+    }
+
+    return { 
+        defineModel
+     }
+}
+
+export default getModelDefiner

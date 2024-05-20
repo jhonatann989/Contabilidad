@@ -10,6 +10,7 @@ import modelEntity from './models/index.js';
 import { crud } from 'express-crud-router'
 import ErrorHandlers from './helperFunctions/ErrorHandlers.js'
 import JWTHandler from './helperFunctions/JWTHandler.js'
+import checkPermissionsMiddleware from './middlewares/checkPermissionsMiddleware.js';
 
 const port = process.env.PORT || 4000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -33,17 +34,7 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  let wildUrls = ["/login", "/logout"]
-  if (!wildUrls.includes(req.url)) {
-    if(
-      JWTHandler.verifyJWT(req.header("Authorization")?.replace("Bearer ", ""))
-    ) { next() }
-    else {
-      res.status(403).send(ErrorHandlers.helperRequestErrorGenerator(403))
-    }
-  } else { next() }
-})
+app.use((req, res, next) => checkPermissionsMiddleware(models, req, res, next))
 
 /**
  * Auth
@@ -173,27 +164,49 @@ app.all('*', async (req, res) => {
   res.status(404).send({ status: "Error", message: "route not found in server" })
 })
 
-sequelize.sync({alter: true}).then(() => {
+sequelize.sync({force: false}).then(() => {
   app.listen(port, async () => {
     console.log(`App listening on port ${port}`)
-    let users = await models.Client.findOne({
-      where: {
-        username: process.env.DEFAULT_USER_USERNAME,
-        role: "owner"
-      }
+
+    let clientPermission = await models.UserPermission.findOne({ where: { module: "Client"}})
+    if (clientPermission == null) {
+      clientPermission = await models.UserPermission.create({ 
+        module: "Client",
+        Create: true,
+        Read: true,
+        Update: true,
+        Delete: true
+      })
+    }
+
+    let userPermission = await models.UserPermission.findOne({ where: { module: "UserPermission"}})
+    if (userPermission == null) {
+      userPermission = await models.UserPermission.create({ 
+        module: "UserPermission",
+        Create: true,
+        Read: true,
+        Update: true,
+        Delete: true
+      })
+    }
+
+    let admin = await models.Client.findOne({
+      where: { username: process.env.DEFAULT_USER_USERNAME }
     })
-    if (users == null) {
-      console.log(users)
-      await models.Client.create({
+    if (admin == null) {
+      admin = await models.Client.create({
         username: process.env.DEFAULT_USER_USERNAME,
         password: process.env.DEFAULT_USER_PASSWORD,
-        role: "owner",
         idNumber: 0,
         idType: "",
         fullName: process.env.DEFAULT_USER_NAME,
         address: "",
         sessionToken: ""
       })
+
+      await admin.addUserPermission(clientPermission)
+      await admin.addUserPermission(userPermission)
     }
+
   })
 })

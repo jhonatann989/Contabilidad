@@ -12,9 +12,6 @@
         "password": {
             "type": "STRING"
         },
-        "role": {
-            "type": "STRING"
-        },
         "idNumber": {
             "type": "INTEGER"
         },
@@ -35,6 +32,10 @@
         {
             "relationType": "hasMany",
             "relationModel": "SocialMediaInfo"
+        },
+        {
+            "relationType": "hasMany",
+            "relationModel": "UserPermission"
         }
     ]
 }

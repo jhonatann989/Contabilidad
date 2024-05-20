@@ -5,11 +5,20 @@
             "autoIncrement": true,
             "primaryKey": true
         },
-        "name": {
-            "type": "INTEGER"
-        },
-        "account": {
+        "module": {
             "type": "STRING"
+        },
+        "Create": {
+            "type": "BOOLEAN"
+        },
+        "Read": {
+            "type": "BOOLEAN"
+        },
+        "Update": {
+            "type": "BOOLEAN"
+        },
+        "Delete": {
+            "type": "BOOLEAN"
         }
     },
     "associations": [

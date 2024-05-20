@@ -3,7 +3,7 @@ import { Sequelize, DataTypes } from 'sequelize'
 import server from './../configs/server.js'
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import modelFunctions from '../modelFunctions/index.js'
+import getModelDefiner from '../modelFunctions/index.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sequelize = new Sequelize(
@@ -43,7 +43,10 @@ for(let rawModel of rawModelObj) {
                 let genericFieldType = modelData.fieldsDefinition[fieldKey].type
                 modelData.fieldsDefinition[fieldKey].type = DataTypes[genericFieldType]
             }
-            models[modelName] = await modelFunctions[modelName].defineModel(sequelize, modelName, modelData.fieldsDefinition, {tableName: modelName})
+            
+            let { defineModel } = await getModelDefiner(modelName)
+            models[modelName] = await defineModel(sequelize, modelName, modelData.fieldsDefinition, {tableName: modelName})
+
     } catch (error) {
         console.error("++++++++++")
         console.error("error Initializing models", rawModel.modelName)
@@ -77,10 +80,5 @@ for(let rawModel of rawModelObj) {
     }
 }
 
-// (async () => { 
-//     console.log("sequelize.sync()")
-//     await sequelize.sync(); 
-//     console.log("synced")
-// })();
 
-export default { sequelize, models }
+export default { sequelize, models,  }
