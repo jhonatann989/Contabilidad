@@ -13,7 +13,7 @@ function decodeJWT(token) {
     try {
         return jwt.verify(token, process.env.SECRET)
     } catch (error) {
-        console.log(error)
+        console.log(error.message)
         return null
     }
 }

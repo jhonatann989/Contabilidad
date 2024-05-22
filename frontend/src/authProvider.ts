@@ -20,13 +20,15 @@ export const authProvider: AuthProvider = {
         headers: new Headers({ 'Content-Type': 'application/json' })
       })
       let json = await handleResponse(response)
-      localStorage.setItem("username", json.username)
-      localStorage.setItem("sessionToken", json.sessionToken)
-      console.log(json)
+
+      localStorage.setItem("username", json.userdata.username)
+      localStorage.setItem("sessionToken", json.userdata.sessionToken)
+      localStorage.setItem("permissions", JSON.stringify(json.permissions))
       return Promise.resolve()
     } catch (error) {
       let message = 'Unknown Error'
       if (error instanceof Error) message = error.message
+      console.error(error)
       return Promise.reject(helperRequestErrorGenerator(400, message))
     }
   },
@@ -41,6 +43,7 @@ export const authProvider: AuthProvider = {
       })
       localStorage.removeItem("sessionToken")
       localStorage.removeItem("username")
+      localStorage.removeItem("permissions")
       return Promise.resolve()
     } catch (error) {
       let message = 'Unknown Error'

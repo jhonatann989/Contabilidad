@@ -45,36 +45,47 @@ app.post('/login', async function (req, res) {
   if (authenticatedUser !== null && !await authenticatedUser.isValidPassword(password, authenticatedUser.dataValues.password)) {
     res.status(401).send(ErrorHandlers.helperRequestErrorGenerator(401, "Incorrect Username or Password"))
   } else {
+    let permissions = await models.UserPermission.findAll({
+      where: {
+        id: authenticatedUser.id
+      }
+    })
     let token = JWTHandler.generateJWT({username: authenticatedUser.username})
     await models.Client.update({ sessionToken: token }, { where: { username: username} })
     let output = JSON.parse(JSON.stringify(authenticatedUser))
     output.sessionToken = token
-    res.status(200).send(output)
+    res.status(200).send({userdata: output, permissions})
   }
 
 });
 
 app.get("/identity", async (req, res) => {
-  let decodedData = JWTHandler.decodeJWT(req.header("Authorization")?.replace("Bearer ", ""))
+  let token = req.header("Authorization")?.replace("Bearer ", "")
+  if(!JWTHandler.verifyJWT(token)) {
+    return res.status(401).send(ErrorHandlers.helperRequestErrorGenerator(401))
+  }
+  let decodedData = JWTHandler.decodeJWT(token)
   let authenticatedUser = await models.Client.findOne({
-    where: { username: decodedData.username },
-    attributes: { exclude: ["password", "sessionToken", "createdAt", "updatedAt", "id"] }
+    where: { username: decodedData.username }
   })
 
   if (authenticatedUser === null) {
     res.status(401).send(ErrorHandlers.helperRequestErrorGenerator(401, "Unknown User"))
   } else {
     res.status(200).send({
-      fullName: authenticatedUser.get("username"),
+      fullName: authenticatedUser.get("username")
     })
   }
 })
 
 app.get("/logout", async (req, res) => {
-  let decodedData = JWTHandler.decodeJWT(req.header("Authorization")?.replace("Bearer ", ""))
+  let token = req.header("Authorization")?.replace("Bearer ", "")
+  if(!JWTHandler.verifyJWT(token)) {
+    return res.status(401).send(ErrorHandlers.helperRequestErrorGenerator(401))
+  }
+  let decodedData = JWTHandler.decodeJWT(token)
   let authenticatedUser = await models.Client.findOne({
-    where: { username: decodedData.username },
-    attributes: { exclude: ["password", "sessionToken", "createdAt", "updatedAt", "id"] }
+    where: { username: decodedData.username }
   })
 
   if (authenticatedUser === null) {

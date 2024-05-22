@@ -1,8 +1,9 @@
 import JWTHandler from './../helperFunctions/JWTHandler.js'
+import ErrorHandlers from '../helperFunctions/ErrorHandlers.js'
 
 
 async function checkPermissionsMiddleware(models, req, res, next) {
-    let wildUrls = ["/login", "/logout"]
+    let wildUrls = ["/login", "/logout", "/identity"]
     let crudVerbs = {
       POST: "Create",
       GET: "Read",
@@ -13,7 +14,7 @@ async function checkPermissionsMiddleware(models, req, res, next) {
     if (wildUrls.includes(req.url)) { return next() }
   
     let token = req.headers["authorization"]?.replace("Bearer ", "")
-    if( !Boolean(JWTHandler.verifyJWT(token)) ) { 
+    if( !JWTHandler.verifyJWT(token)) { 
       return res.status(403).send(ErrorHandlers.helperRequestErrorGenerator(403, "Invalid Token"))
     }
     let {username} = JWTHandler.decodeJWT(token)
@@ -22,11 +23,13 @@ async function checkPermissionsMiddleware(models, req, res, next) {
     if(authenticatedUser == null) {
       return res.status(403).send(ErrorHandlers.helperRequestErrorGenerator(403, "The user associated to this token is invalid"))
     }
-    
+    let module = req.url.split("/")
+    module = module[0] == "" ? module[1] : module[0]
+    module = module.split("?").shift()
     let permissions = await models.UserPermission.findOne({
       where: {
         id: authenticatedUser.id,
-        module: req.url.split("/").pop(),
+        module,
         [crudVerbs[req.method]]: true
       }
     })
