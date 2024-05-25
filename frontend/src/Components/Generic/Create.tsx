@@ -1,10 +1,10 @@
 import { DataScheme } from "./GenericTypes";
-import { Edit, SimpleForm, TextInput, DateInput, BooleanInput, NumberInput, ReferenceInput, SelectInput } from 'react-admin';
+import { SimpleForm, TextInput, DateInput, BooleanInput, NumberInput, ReferenceInput, SelectInput, Create } from 'react-admin';
 
 export const GenericCreate = (props: any) => {
     let schema:DataScheme[] = Array.isArray(props.schema)? props.schema : []
     return (
-    <Edit>
+    <Create>
         <SimpleForm>
             {schema.map((item: DataScheme) => {
                 if(typeof item.type == "string") {
@@ -23,7 +23,7 @@ export const GenericCreate = (props: any) => {
                 }
             })}
         </SimpleForm>
-    </Edit>
+    </Create>
 )
 };
 

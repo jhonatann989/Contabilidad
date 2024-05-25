@@ -6,7 +6,8 @@
             "primaryKey": true
         },
         "module": {
-            "type": "STRING"
+            "type": "STRING",
+            "unique": true
         },
         "Create": {
             "type": "BOOLEAN"

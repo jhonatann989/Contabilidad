@@ -99,12 +99,13 @@ app.get("/logout", async (req, res) => {
 
 /**CRUD Handler */
 for (const modelName of Object.keys(models)) {
+  const readOnlyModels = ["ModuleNames"]
   app.use(crud(`/${modelName}`, {
     get: ({ filter, limit, offset, order }) =>
       models[modelName].findAndCountAll({ limit, offset, order, where: filter }),
-    create: body => models[modelName].create(body),
-    update: (id, body) => models[modelName].update(body, { where: { id } }),
-    destroy: id => models[modelName].destroy({ where: { id } }),
+    create: body => !readOnlyModels.includes(modelName)? models[modelName].create(body) : null,
+    update: (id, body) => !readOnlyModels.includes(modelName)? models[modelName].update(body, { where: { id } }) : null,
+    destroy: id => !readOnlyModels.includes(modelName)? models[modelName].destroy({ where: { id } }) : null,
   }))
 }
 
@@ -156,26 +157,11 @@ app.get('/', async (req, res) => {
   res.send("Hello World!")
 })
 
-app.get('/builder/:newModelName', async (req, res) => {
-  let modelName = req.params.newModelName
-  try {
-    let model = JSON.parse(fs.readFileSync(`${__dirname}/models/${modelName}.json`))
-    res.send(model)
-  } catch (error) {
-    console.error(error)
-    if (error.code == 'ENOENT') {
-      res.status(404).send({ error: `No model found with name ${modelName}` })
-    } else {
-      res.status(500).send({ error: error.message })
-    }
-  }
-})
-
 app.all('*', async (req, res) => {
   res.status(404).send({ status: "Error", message: "route not found in server" })
 })
 
-sequelize.sync({force: false}).then(() => {
+sequelize.sync({force: true}).then(() => {
   app.listen(port, async () => {
     console.log(`App listening on port ${port}`)
 
