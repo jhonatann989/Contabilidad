@@ -11,6 +11,7 @@ import { GenericShow } from "./Components/Generic/Show";
 import { DataScheme } from "./Components/Generic/GenericTypes";
 import { GenericEdit } from "./Components/Generic/Edit";
 import { GenericList } from "./Components/Generic/List";
+import { GenericCreate } from "./Components/Generic/Create";
 
 
 export const App = () => {
@@ -40,8 +41,8 @@ export const App = () => {
       { source: "updatedAt", label: "Updated At", type: "Date", isListable: false ,isEditable: false, isCreatable: false},
     ],
     UserPermission: [
-      { source: "ClientId", label: "Client ID", type: {type: "Text", property:"fullName", reference: "Client"}, isListable: true ,isEditable: true, isCreatable: true},
-      { source: "module", label: "Module", type: "Text", isListable: true ,isEditable: true, isCreatable: true},
+      { source: "ClientId", label: "Client ID", type: {type: "Text", property:"fullName", reference: "Client"}, isListable: true ,isEditable: false, isCreatable: true},
+      { source: "module", label: "Module", type: "Text", isListable: true ,isEditable: false, isCreatable: true},
       { source: "Create", label: "Can Create?", type: "Boolean", isListable: true ,isEditable: true, isCreatable: true},
       { source: "Read", label: "Can Read?", type: "Boolean", isListable: false ,isEditable: true, isCreatable: true},
       { source: "Update", label: "Can Update", type: "Boolean", isListable: false ,isEditable: true, isCreatable: true},
@@ -53,6 +54,7 @@ export const App = () => {
   <Admin dataProvider={dataProvider} authProvider={authProvider}>
     {permissions.map((permission:Permission) => <Resource
       name={permission.module}
+      create={permission.Create? <GenericCreate schema={schemes[permission.module]} /> : undefined}
       list={permission.Read? <GenericList schema={schemes[permission.module]} /> : undefined}
       show={permission.Read? <GenericShow schema={schemes[permission.module]}/>: undefined}
       edit={permission.Update? <GenericEdit schema={schemes[permission.module]} /> : undefined}

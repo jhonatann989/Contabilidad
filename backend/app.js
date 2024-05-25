@@ -175,7 +175,7 @@ app.all('*', async (req, res) => {
   res.status(404).send({ status: "Error", message: "route not found in server" })
 })
 
-sequelize.sync({force: true}).then(() => {
+sequelize.sync({force: false}).then(() => {
   app.listen(port, async () => {
     console.log(`App listening on port ${port}`)
 
