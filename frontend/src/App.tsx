@@ -38,6 +38,14 @@ export const App = () => {
       { source: "address", label: "Address", type: "RichText", isListable: false ,isEditable: true, isCreatable: true},
       { source: "createdAt", label: "Created At", type: "Date", isListable: false ,isEditable: false, isCreatable: false},
       { source: "updatedAt", label: "Updated At", type: "Date", isListable: false ,isEditable: false, isCreatable: false},
+    ],
+    UserPermission: [
+      { source: "ClientId", label: "Client ID", type: {type: "Text", property:"fullName", reference: "Client"}, isListable: true ,isEditable: true, isCreatable: true},
+      { source: "module", label: "Module", type: "Text", isListable: true ,isEditable: true, isCreatable: true},
+      { source: "Create", label: "Can Create?", type: "Boolean", isListable: true ,isEditable: true, isCreatable: true},
+      { source: "Read", label: "Can Read?", type: "Boolean", isListable: false ,isEditable: true, isCreatable: true},
+      { source: "Update", label: "Can Update", type: "Boolean", isListable: false ,isEditable: true, isCreatable: true},
+      { source: "Delete", label: "Can Delete?", type: "Boolean", isListable: false ,isEditable: true, isCreatable: true},
     ]
   }
 

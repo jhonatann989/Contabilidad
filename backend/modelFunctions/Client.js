@@ -19,8 +19,12 @@ async function defineModel(sequelize, modelName, definitions, options) {
         type: definitions.password.type,
         get() { return null},
         async set(value) {
-            let hashedPassword = await hashPassword(value)
-            this.setDataValue("password", hashedPassword)
+            if(typeof value == "string" && value.length > 0) {
+                let hashedPassword = await hashPassword(value)
+                this.setDataValue("password", hashedPassword)
+            } else {
+                this.setDataValue("password", this._previousDataValues.password)
+            }
         }
     }
 

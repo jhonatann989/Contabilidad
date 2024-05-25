@@ -47,7 +47,7 @@ app.post('/login', async function (req, res) {
   } else {
     let permissions = await models.UserPermission.findAll({
       where: {
-        id: authenticatedUser.id
+        ClientId: authenticatedUser.id
       }
     })
     let token = JWTHandler.generateJWT({username: authenticatedUser.username})
@@ -175,7 +175,7 @@ app.all('*', async (req, res) => {
   res.status(404).send({ status: "Error", message: "route not found in server" })
 })
 
-sequelize.sync({force: false}).then(() => {
+sequelize.sync({force: true}).then(() => {
   app.listen(port, async () => {
     console.log(`App listening on port ${port}`)
 

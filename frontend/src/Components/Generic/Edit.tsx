@@ -7,14 +7,12 @@ export const GenericEdit = (props: any) => {
     <Edit>
         <SimpleForm>
             {schema.map((item: DataScheme) => {
-                if(item.isEditable) {
-                    switch(item.type) {
-                        case "Text": return <TextInput  source={item.source} label={item.label} required />;
-                        case "Number": return <NumberInput source={item.source} label={item.label} required />;
-                        case "Date": return <DateInput  source={item.source} label={item.label} required />;
-                        case "RichText": return <TextInput  source={item.source} label={item.label} required multiline={true} />;
-                        case "Boolean": return <BooleanInput  source={item.source} label={item.label} />;
-                    }
+                switch(item.type) {
+                    case "Text": return <TextInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable}/>;
+                    case "Number": return <NumberInput source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
+                    case "Date": return <DateInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
+                    case "RichText": return <TextInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} multiline={true} />;
+                    case "Boolean": return <BooleanInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
                 }
             })}
         </SimpleForm>

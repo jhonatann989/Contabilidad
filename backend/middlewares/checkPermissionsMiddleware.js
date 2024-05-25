@@ -26,9 +26,10 @@ async function checkPermissionsMiddleware(models, req, res, next) {
     let module = req.url.split("/")
     module = module[0] == "" ? module[1] : module[0]
     module = module.split("?").shift()
+    console.log({module})
     let permissions = await models.UserPermission.findOne({
       where: {
-        id: authenticatedUser.id,
+        ClientId: authenticatedUser.id,
         module,
         [crudVerbs[req.method]]: true
       }

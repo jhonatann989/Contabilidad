@@ -1,4 +1,4 @@
-import { Show,SimpleShowLayout, TextField, DateField, NumberField, RichTextField, BooleanField } from "react-admin";
+import { Show,SimpleShowLayout, TextField, DateField, NumberField, RichTextField, BooleanField, ReferenceField  } from "react-admin";
 import { DataScheme } from "./GenericTypes";
 
 
@@ -8,12 +8,29 @@ export const GenericShow = (props: any) => {
     <Show>
         <SimpleShowLayout>
             {schema.map((item: DataScheme) => {
-                switch(item.type) {
-                    case "Text": return <TextField source={item.source} label={item.label} />;
-                    case "Number": return <NumberField source={item.source} label={item.label} />;
-                    case "Date": return <DateField source={item.source} label={item.label} />;
-                    case "RichText": return <RichTextField source={item.source} label={item.label} />;
-                    case "Boolean": return <BooleanField  source={item.source} label={item.label} />;
+                if(typeof item.type == "string") {
+                    switch(item.type) {
+                        case "Text": return <TextField source={item.source} label={item.label} />;
+                        case "Number": return <NumberField source={item.source} label={item.label} />;
+                        case "Date": return <DateField source={item.source} label={item.label} />;
+                        case "RichText": return <RichTextField source={item.source} label={item.label} />;
+                        case "Boolean": return <BooleanField  source={item.source} label={item.label} />;
+                    }
+                } else if(typeof item.type == "object") {
+
+                    const getField = (fieldType:string, property:string) => {
+                        switch(fieldType) {
+                            case "Text": return <TextField source={property}/>;
+                            case "Number": return <NumberField source={property} />;
+                            case "Date": return <DateField source={property} />;
+                            case "RichText": return <RichTextField source={property} />;
+                            case "Boolean": return <BooleanField source={property} />;
+                        }
+                    }
+
+                    return <ReferenceField source={item.source} reference={item.type.reference} label={item.label} link={false} >
+                                {getField(item.type.type, item.type.property)}
+                            </ReferenceField>;
                 }
             })}
         </SimpleShowLayout>
