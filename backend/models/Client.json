@@ -31,11 +31,23 @@
     "associations": [
         {
             "relationType": "hasMany",
-            "relationModel": "SocialMediaInfo"
+            "relationModel": "SocialMediaInfo",
+            "childHandle": {
+                "create": true,
+                "read": true,
+                "update": true,
+                "delete": true
+            }
         },
         {
             "relationType": "hasMany",
-            "relationModel": "UserPermission"
+            "relationModel": "UserPermission",
+            "childHandle": {
+                "create": false,
+                "read": false,
+                "update": false,
+                "delete": true
+            }
         }
     ]
 }

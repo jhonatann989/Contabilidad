@@ -15,7 +15,7 @@ import checkPermissionsMiddleware from './middlewares/checkPermissionsMiddleware
 const port = process.env.PORT || 4000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const { models, sequelize } = modelEntity
+const { models, sequelize, modelAssociations } = modelEntity
 
 const app = express()
 
@@ -99,13 +99,29 @@ app.get("/logout", async (req, res) => {
 
 /**CRUD Handler */
 for (const modelName of Object.keys(models)) {
-  const readOnlyModels = ["ModuleNames"]
   app.use(crud(`/${modelName}`, {
-    get: ({ filter, limit, offset, order }) =>
-      models[modelName].findAndCountAll({ limit, offset, order, where: filter }),
-    create: body => !readOnlyModels.includes(modelName)? models[modelName].create(body) : null,
-    update: (id, body) => !readOnlyModels.includes(modelName)? models[modelName].update(body, { where: { id } }) : null,
-    destroy: id => !readOnlyModels.includes(modelName)? models[modelName].destroy({ where: { id } }) : null,
+    get: ({ filter, limit, offset, order }) => {
+      let childModels = getTargetRelations(modelAssociations[modelName], "read")
+
+      return childModels.length? 
+        models[modelName].findAndCountAll({ limit, offset, order, where: filter, include: childModels }) 
+        : 
+        models[modelName].findAndCountAll({ limit, offset, order, where: filter })
+    },
+    create: async body => {
+      let createdData = await models[modelName].create(body)
+      for(let association of modelAssociations[modelName]) {
+        if(body.hasOwnProperty(`${association.relationModel}s`) && association.childHandle.create) {
+          for(let child of body[`${association.relationModel}s`]) {
+            let createdChild = await models[association.relationModel].create(child)
+            await createdData[`add${association.relationModel}`](createdChild)
+          }
+        }
+      }
+      return createdData
+    },
+    update: (id, body) => models[modelName].update(body, { where: { id } }),
+    destroy: id => models[modelName].destroy({ where: { id } }),
   }))
 }
 
@@ -207,3 +223,20 @@ sequelize.sync({force: true}).then(() => {
 
   })
 })
+
+/**
+ * Helper Functions
+ */
+
+function getTargetRelations(modelAssociations, childHandler) {
+  let childModels = []
+  let targetRelations = ["hasOne","hasMany"]
+
+  for (let association of modelAssociations) {
+    if(targetRelations.includes(association.relationType) && association.childHandle[childHandler]) {
+      childModels.push(models[association.relationModel])
+    }
+  }
+
+  return childModels
+}

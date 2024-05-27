@@ -15,6 +15,7 @@ const sequelize = new Sequelize(
 
 let rawModelObj = []
 let models = {}
+let modelAssociations = {}
 
 //Reading file Models
 for(let file of fs.readdirSync(`${__dirname}`)) {
@@ -59,6 +60,7 @@ for(let rawModel of rawModelObj) {
 for(let rawModel of rawModelObj) {
     try {
             let {modelName, modelData} = rawModel
+            modelAssociations[modelName] = modelData.associations
             /**Associations */
             for(const association of modelData.associations ) {
                 try {
@@ -81,4 +83,4 @@ for(let rawModel of rawModelObj) {
 }
 
 
-export default { sequelize, models,  }
+export default { sequelize, models, modelAssociations }

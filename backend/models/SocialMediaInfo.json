@@ -6,7 +6,7 @@
             "primaryKey": true
         },
         "name": {
-            "type": "INTEGER"
+            "type": "STRING"
         },
         "account": {
             "type": "STRING"

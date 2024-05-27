@@ -19,7 +19,6 @@ async function defineModel(sequelize, modelName, definitions, options) {
             console.error("----------")
         }
     }
-    console.log({ModuleNames})
     let localDefinitions = definitions
     localDefinitions.module = {
         ...localDefinitions.module,
