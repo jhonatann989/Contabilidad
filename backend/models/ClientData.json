@@ -5,21 +5,23 @@
             "autoIncrement": true,
             "primaryKey": true
         },
-        "username": {
-            "type": "STRING",
-            "unique": true
+        "idNumber": {
+            "type": "INTEGER"
         },
-        "password": {
+        "idType": {
             "type": "STRING"
         },
-        "sessionToken": {
+        "fullName": {
+            "type": "STRING"
+        },
+        "address": {
             "type": "STRING"
         }
     },
     "associations": [
         {
-            "relationType": "hasOne",
-            "relationModel": "ClientData",
+            "relationType": "hasMany",
+            "relationModel": "SocialMediaInfo",
             "childHandle": {
                 "create": true,
                 "read": true,
@@ -28,14 +30,8 @@
             }
         },
         {
-            "relationType": "hasMany",
-            "relationModel": "UserPermission",
-            "childHandle": {
-                "create": false,
-                "read": false,
-                "update": false,
-                "delete": true
-            }
+            "relationType": "belongsTo",
+            "relationModel": "Client"
         }
     ]
 }

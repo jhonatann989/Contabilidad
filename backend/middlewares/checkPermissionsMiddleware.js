@@ -4,6 +4,7 @@ import ErrorHandlers from '../helperFunctions/ErrorHandlers.js'
 
 async function checkPermissionsMiddleware(models, req, res, next) {
     let wildUrls = ["/login", "/logout", "/identity"]
+    let sensitiveModels = [""]
     let crudVerbs = {
       POST: "Create",
       GET: "Read",

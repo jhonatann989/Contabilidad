@@ -15,7 +15,7 @@
     "associations": [
         {
             "relationType": "belongsTo",
-            "relationModel": "Client"
+            "relationModel": "ClientData"
         }
     ], 
     "hooks": [],
