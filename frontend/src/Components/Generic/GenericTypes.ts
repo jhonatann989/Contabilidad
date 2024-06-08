@@ -10,6 +10,7 @@ export type DataScheme = {
     source: string,
     label: string,
     type: FieldType|FieldTypeWithReference,
+    isViewable: boolean,
     isListable: boolean,
     isEditable: boolean,
     isCreatable: boolean

@@ -1,5 +1,5 @@
 import { DataScheme } from "./GenericTypes";
-import { Edit, SimpleForm, TextInput, DateInput, NumberInput, BooleanInput, ReferenceInput, SelectInput } from 'react-admin';
+import { Edit, SimpleForm, TextInput, DateInput, NumberInput, NullableBooleanInput, ReferenceInput, SelectInput } from 'react-admin';
 
 export const GenericEdit = (props: any) => {
     let schema:DataScheme[] = Array.isArray(props.schema)? props.schema : []
@@ -14,7 +14,7 @@ export const GenericEdit = (props: any) => {
                         case "Number": return <NumberInput source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
                         case "Date": return <DateInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
                         case "RichText": return <TextInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} multiline={true} />;
-                        case "Boolean": return <BooleanInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
+                        case "Boolean": return <NullableBooleanInput  source={item.source} label={item.label} required={item.isEditable} disabled={!item.isEditable} />;
                     }
                 } else if(typeof item.type == "object") {
 
